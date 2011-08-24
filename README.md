@@ -21,7 +21,7 @@ You must also install Isaac Schlueter's sax module, which is used when importing
 ##  EWD DOM
 
 This is a lightweight DOM implementation for Node.js.  It differs from other DOM implementations by 
-storing DOMs persistently in the extremely high-performance [Globals](http://glogalsdb.org)database.  By virtue
+storing DOMs persistently in the extremely high-performance [Globals](http://glogalsdb.org) database.  By virtue
 of the in-process nature of the Globals APIs and the performance of the Globals database, the EWD DOM implementation 
 breaks with normally-accepted Node.js convention and uses the synchronous APIs for the Globals database, allowing the 
 ewdDOM module to provide a fully object-oriented suite of DOM APIs.  
@@ -74,7 +74,7 @@ The array of document names will, of course, initially be empty because you have
 
 ##  ewdDOM Start Parameters
 
-The parameters that you can specify for the *ewdGateway* *start* function are the standard ones for opening a 
+The parameters that you can specify for the *ewdGateway* *start()* function are the standard ones for opening a 
 Globals database, though the ewdDOM module provides common defaults as follows:
 
 - *path  = the path in which the Globals database file (CACHE.DAT) resides (default *'/home/user/globals/mgr'*)
@@ -352,7 +352,7 @@ Returns the current node's Next Sibling Node object, or false if it doesn't have
 
 Returns the current node's name property
 
-#### node.nodeTYpe
+#### node.nodeType
 
 Returns the current node's type:
 
