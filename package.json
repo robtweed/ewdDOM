@@ -1,0 +1,16 @@
+{ "name" : "ewdDOM"
+, "description" : "Persistent lightweight DOM, using the Globals database"
+, "version" : "0.0.1"
+, "author" : "Rob Tweed <rtweed@mgateway.com>"
+, "repository" :
+  { "type" : "git"
+  , "url" : "git://github.com/robtweed/ewdDOM.git"
+  }
+, "bugs" : { "web" : "http://github.com/robtweed/ewdGateway/issues" }
+, "os" : [ "linux", "darwin" ]
+, "directories" : { "lib" : "./lib/" }
+, "main" : "./lib/ewdDOM
+, "engines" : { "node" : ">=0.2.2" }
+, "dependencies" : {}
+, "licenses": [ "MIT" ]
+}
