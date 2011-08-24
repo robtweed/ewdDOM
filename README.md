@@ -21,7 +21,7 @@ You must also install Isaac Schlueter's sax module, which is used when importing
 ##  EWD DOM
 
 This is a lightweight DOM implementation for Node.js.  It differs from other DOM implementations by 
-storing DOMs persistently in the extremely high-performance [http://glogalsdb.org](Globals) database.  By virtue
+storing DOMs persistently in the extremely high-performance (http://glogalsdb.org)[Globals] database.  By virtue
 of the in-process nature of the Globals APIs and the performance of the Globals database, the EWD DOM implementation 
 uses the synchronous Globals APIs for Node.js, allowing the ewdDOM module to provide a fully object-oriented suite of 
 DOM APIs.  
