@@ -3,7 +3,7 @@
 Persistent lightweight DOM for Node.js, using the Globals database
 
 Rob Tweed <rtweed@mgateway.com>  
-25 July 2011, M/Gateway Developments Ltd [http://www.mgateway.com](http://www.mgateway.com)  
+25 August 2011, M/Gateway Developments Ltd [http://www.mgateway.com](http://www.mgateway.com)  
 
 Twitter: @rtweed
 
@@ -24,15 +24,21 @@ This is a lightweight DOM implementation for Node.js.  It differs from other DOM
 storing DOMs persistently in the extremely high-performance [Globals](http://glogalsdb.org) database.  By virtue
 of the in-process nature of the Globals APIs and the performance of the Globals database, the EWD DOM implementation 
 breaks with normally-accepted Node.js convention and uses the synchronous APIs for the Globals database, allowing the 
-ewdDOM module to provide a fully object-oriented suite of DOM APIs.  
+ewdDOM module to provide a fully object-oriented suite of DOM APIs, without appearing to have any impact on the performance 
+of the Node.js process thread.  
 
 When using the EWD DOM APIs, you are directly manipulating persistent DOMs stored in the Globals database rather than 
 an in-memory copy of the DOMs.  Once created, a DOM will persist until an explicit removeDocument() method is invoked.
 
+The flexibility of the Globals database makes it ideal for implementing a persistent DOM.  For more about how 
+Globals can be used as a NoSQL database engine, see
+ [http://gradvs1.mgateway.com/docs/nosql_in_globals.pdf](http://gradvs1.mgateway.com/docs/nosql_in_globals.pdf).
+
 EWD DOMs can be created in two ways:
 
-- by parsing an XML or HTML file.  Isaac Schlueter's sax module provides the core parsing engine
-- programmatically, by using the EWD DOM APIs
+- by parsing an XML or HTML file.  Isaac Schlueter's sax module provides the core parsing engine, triggering ewdDOM APIs 
+to build a new DOM.
+- programmatically, by using the EWD DOM APIs yourself.
 
 ewdDOM essentially provides Native XML Database storage for Node.js.  There is currently no XPath or XQuery 
 capability, but it is hoped that these will follow (volunteers for collaboration are very welcome!).
@@ -53,7 +59,13 @@ The EWD DOM is actually the core of the [EWD Ajax/Mobile web application develop
 
 Node.js should be installed on the same physical server as an instance of the Globals database.  See the 
 [Globals web site](http://glogalsdb.org) for instructions on installing and configuring the Globals database
- for use with Node.js.
+ for use with Node.js.  
+ 
+      Note: The current *ewdDOM* module assumes that you will have installed the Globals cache.node into a 
+      path that ensures that it can be loaded into Node.js using *require('cache')*.  See the 
+	  Globals Node.js interface guide.  If you install Globals in some other way, you'll need 
+	  to edit the */lib/ewdDOM.js* file: search for *require('cache') and change the require 
+	  path appropriately.
 
 The following is a simple example of how to use the *ewdDOM* module:
 
