@@ -61,10 +61,10 @@ Node.js should be installed on the same physical server as an instance of the Gl
 [Globals web site](http://glogalsdb.org) for instructions on installing and configuring the Globals database
  for use with Node.js.  
  
-      Note: The current *ewdDOM* module assumes that you will have installed the Globals cache.node into a 
-      path that ensures that it can be loaded into Node.js using *require('cache')*.  See the 
+      Note: The current ewdDOM module assumes that you will have installed the Globals cache.node into a 
+      path that ensures that it can be loaded into Node.js using require('cache').  See the 
 	  Globals Node.js interface guide.  If you install Globals in some other way, you'll need 
-	  to edit the */lib/ewdDOM.js* file: search for *require('cache') and change the require 
+	  to edit the /lib/ewdDOM.js file: search for require('cache') and change the require 
 	  path appropriately.
 
 The following is a simple example of how to use the *ewdDOM* module:
