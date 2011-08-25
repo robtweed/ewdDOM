@@ -61,7 +61,7 @@ Node.js should be installed on the same physical server as an instance of the Gl
 [Globals web site](http://glogalsdb.org) for instructions on installing and configuring the Globals database
  for use with Node.js.  
  
-      Note: The current ewdDOM module assumes that you will have installed the Globals cache.node into a 
+      Note: The current ewdDOM module assumes that you will have installed the Globals cache.node module into a 
       path that ensures that it can be loaded into Node.js using require('cache').  See the 
 	  Globals Node.js interface guide.  If you install Globals in some other way, you'll need 
 	  to edit the /lib/ewdDOM.js file: search for require('cache') and change the require 
@@ -149,7 +149,7 @@ removed by using the ewdDOM.removeDocument() method.
 
 ###Accessing an existing DOM
 
-You can access (and then modify or manipulate) using the ewdDOM.getDocument() method, identifying 
+You can access (and then modify or manipulate) an existing DOM using the ewdDOM.getDocument() method, identifying 
 the DOM you require by its documentName:
 
 
@@ -174,7 +174,7 @@ array of document objects:
         documents[0].output();
       });
 
-Alternatively, the ewdDOM.getDocumentNames() method returns an array of DOM names:
+Alternatively, the ewdDOM.getDocumentNames() method returns an array of your existing DOM names:
 
       var ewdDOM = require('ewdDOM');
       var params = {
