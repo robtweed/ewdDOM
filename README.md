@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/robtweed/ewdDOM.png)](http://travis-ci.org/robtweed/ewdDOM)
 # ewdDOM
  
 Persistent lightweight DOM for Node.js, using the Globals database
