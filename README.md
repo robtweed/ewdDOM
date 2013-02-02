@@ -3,7 +3,7 @@
 Persistent lightweight DOM for Node.js, using the Globals database
 
 Rob Tweed <rtweed@mgateway.com>  
-25 August 2011, M/Gateway Developments Ltd [http://www.mgateway.com](http://www.mgateway.com)  
+02 February 2013, M/Gateway Developments Ltd [http://www.mgateway.com](http://www.mgateway.com)  
 
 Twitter: @rtweed
 
@@ -21,18 +21,19 @@ You must also install Isaac Schlueter's sax module, which is used when importing
 ##  EWD DOM
 
 This is a lightweight DOM implementation for Node.js.  It differs from other DOM implementations by 
-storing DOMs persistently in the extremely high-performance [Globals](http://globalsdb.org) database.  By virtue
-of the in-process nature of the Globals APIs and the performance of the Globals database, the EWD DOM implementation 
-breaks with normally-accepted Node.js convention and uses the synchronous APIs for the Globals database, allowing the 
-ewdDOM module to provide a fully object-oriented suite of DOM APIs, without appearing to have any impact on the performance 
-of the Node.js process thread.  
+storing DOMs persistently in a Mumps database (eg GT.M, Cach&eacute; or GlobalsDB).  This module
+provides a demonstration and showcase for the OO abstraction of Mumps Global Storage, as documented in:
 
-When using the EWD DOM APIs, you are directly manipulating persistent DOMs stored in the Globals database rather than 
+[http://robtweed.wordpress.com/2013/01/26/to-the-node-js-community-healthcare-needs-your-help/](http://robtweed.wordpress.com/2013/01/26/to-the-node-js-community-healthcare-needs-your-help/).
+
+When using the EWD DOM APIs, you are directly manipulating persistent DOMs stored in the Mumps database rather than 
 an in-memory copy of the DOMs.  Once created, a DOM will persist until an explicit removeDocument() method is invoked.
 
-The flexibility of the Globals database makes it ideal for implementing a persistent DOM.  For more about how 
-Globals can be used as a NoSQL database engine, see
- [http://gradvs1.mgateway.com/docs/nosql_in_globals.pdf](http://gradvs1.mgateway.com/docs/nosql_in_globals.pdf).
+The flexibility of the Mumps database makes it ideal for implementing a persistent DOM.  An XML DOM
+is implemented as a graph database, but this is just one of the styles of NoSQL data storage that a 
+Mumps database can support. For more about how a
+Mumps database can be used as a "universal" NoSQL database engine, see
+ [http://www.mgateway.com/docs/universalNoSQL.pdf](http://www.mgateway.com/docs/universalNoSQL.pdf).
 
 EWD DOMs can be created in two ways:
 
@@ -43,56 +44,46 @@ to build a new DOM.
 ewdDOM essentially provides Native XML Database storage for Node.js.  There is currently no XPath or XQuery 
 capability, but it is hoped that these will follow (volunteers for collaboration are very welcome!).
 
-It turns out that persiatent DOMs are a very powerful and flexible way of storing and manipulating data.  Although 
+It turns out that persistent DOMs are a very powerful and flexible way of storing and manipulating data.  Although 
 you can output any EWD DOM as an XML text file, there is actually no need to do so unless you really need an 
 XML file as output for some reason.  The real power of the DOM is the ability to quickly and easily 
 transform and modify the document via the DOM APIs, and it is straightforward to walk the DOM tree and carry 
 out actions (or output data) based on the information found while traversing the DOM.
 
-The EWD DOM is actually the core of the [EWD Ajax/Mobile web application development framework](http://www.mgateway.com/ewd.html) 
- and is the key to the power and flexibility of EWD.  It has been re-implemented and made available for Node.js for two reasons:
- 
- - as a useful standalone product in its own right
- - as an initial stepping stone to porting EWD to a fully Node.js environment
 
 ##  Using the ewdDOM module
 
-Node.js should be installed on the same physical server as an instance of the Globals database.  See the 
-[Globals web site](http://globalsdb.org) for instructions on installing and configuring the Globals database
- for use with Node.js.  
+Node.js should be installed on the same physical server as an instance of the Mumps database that you use. If
+you use the [dEWDrop VM](http://www.fourthwatchsoftware.com), everything is ready to run,  All you need to do is to install the ewdDOM module.
  
-      Note: The current ewdDOM module assumes that you will have installed the Globals cache.node module into a 
-      path that ensures that it can be loaded into Node.js using require('cache').  See the 
-	  Globals Node.js interface guide.  If you install Globals in some other way, you'll need 
-	  to edit the /lib/ewdDOM.js file: search for require('cache') and change the require 
-	  path appropriately.
+The following is a simple example of how to use the *ewdDOM* module within the dEWDrop VM :
 
-The following is a simple example of how to use the *ewdDOM* module:
-
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        console.log("version = " + ewdDOM.version);
-        console.log("Your persistent DOMs: " + JSON.stringify(ewdDOM.getDocumentNames()));
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      console.log("version = " + dom.version);
+      console.log("Your persistent DOMs: " + JSON.stringify(dom.getDocumentNames()));
+      db.close();      
 
-This example assumes that the Globals database has been installed in the path */home/user/globals*.  The
-ewdDOM.start() method opens the database and establishes the environment for your DOMs to be accessed 
-within its callback function.
+
 
 The array of document names will, of course, initially be empty because you haven't created any DOMs yet.
 
-##  ewdDOM Start Parameters
+##  ewdDOM init() Parameters
 
-The parameters that you can specify for the *ewdGateway* *start()* function are the standard ones for opening a 
-Globals database, though the ewdDOM module provides common defaults as follows:
+The init() function must be invoked before you can use the ewdDOM APIs.  It takes a single argument which
+is an object with the following properties:
 
-- *path  = the path in which the Globals database file (CACHE.DAT) resides (default *'/home/user/globals/mgr'*)
-- *username*  = the Globals database username (default *_SYSTEM*)
-- *password*  = the Globals databaase password (default *SYS*)
-- *namespace* = the Globals database namespace to which *ewdDOM* should connect (default *'USER'*)
+- *db  = pointer to the Mumps database that you've opened
+- *ewdGlobalsPath*  = the path used by the require() function to load the ewdGlobals module (ewdGlobals
+  provides the OO abstraction for Mumps global storage)
+- *domGlobalName*  = the name of the Mumps Global that will be used to store your XML DOMs (default *^zewdDOM*)
 
 ##  EWD DOM Examples
 
@@ -102,14 +93,19 @@ Use the ewdDOM.parse() method.  The example below parses an XML document (*'inde
 creates a persistent DOM named *'stdemo-index'*.  The document.output() method then outputs 
 the DOM to the console as an XML document again.
 
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        var document = ewdDOM.parse('/home/user/ewdapps/stdemo/index.xml', 'stdemo-index');
-        document.output();
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      var document = dom.parse('/home/user/ewdapps/stdemo/index.xml', 'stdemo-index');
+      document.output();
+      db.close();
+
 
 ###Creating a DOM programmatically, using the DOM API methods
 
@@ -117,32 +113,36 @@ Use the ewdDOM.createDocument() method.  The example below creates a new DOM nam
 nodes are then added using a variety of the available DOM API methods.  Finally we output it 
 to the console as an XML document.
 
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        var document = ewdDOM.createDocument('myDocument');
-		var documentNode = document.getDocumentNode();
-		var node1 = document.createElement("testElement");
-        documentNode.appendChild(node1);
-		node1.setAttribute("name","rob");
-        node1.setAttribute("town","Reigate");
-		var newNode = {
-          tagName: "div",
-          attributes: {id: "myNewNode", abc: 123, def: "this is cool!"},
-          text: "This is a new div"
-        };
-        var node2 = node1.addElement(newNode);
-		newNode = {
-          tagName: "div",
-          attributes: {id: "secondDiv", abc: 'hkjhjkhjk'},
-        };
-        var node3 = node1.addElement(newNode);
-        var imNode = node1.insertIntermediateElement("intermediateTag");
-        var pNode = imNode.insertParentElement("newParentTag");
-        document.output();
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      var document = dom.createDocument('myDocument');
+      var documentNode = document.getDocumentNode();
+      var node1 = document.createElement("testElement");
+      documentNode.appendChild(node1);
+      node1.setAttribute("name","rob");
+      node1.setAttribute("town","Reigate");
+      var newNode = {
+        tagName: "div",
+        attributes: {id: "myNewNode", abc: 123, def: "this is cool!"},
+        text: "This is a new div"
+      };
+      var node2 = node1.addElement(newNode);
+      newNode = {
+        tagName: "div",
+        attributes: {id: "secondDiv", abc: 'hkjhjkhjk'},
+      };
+      var node3 = node1.addElement(newNode);
+      var imNode = node1.insertIntermediateElement("intermediateTag");
+      var pNode = imNode.insertParentElement("newParentTag");
+      document.output();
+      db.close();
 	  
 Note that DOMs, once created, will automatically persist until they are explicitly 
 removed by using the ewdDOM.removeDocument() method.
@@ -153,47 +153,63 @@ You can access (and then modify or manipulate) an existing DOM using the ewdDOM.
 the DOM you require by its documentName:
 
 
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        var document = ewdDOM.getDocument('stdemo-index');
-        document.output();
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      var document = dom.getDocument('stdemo-index');
+      document.output();
+      db.close();
 	  
 You can find and identify your saved DOMs using the ewdDOM.getDocuments() method.  This returns an 
 array of document objects:
 
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        var documents = ewdDOM.getDocuments();
-        documents[0].output();
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      var documents = dom.getDocuments();
+      documents[0].output();
+      db.close();
 
 Alternatively, the ewdDOM.getDocumentNames() method returns an array of your existing DOM names:
 
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        console.log("Your DOMs: " + JSON.stringify(ewdDOM.getDocumentNames()));
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      console.log("Your DOMs: " + JSON.stringify(dom.getDocumentNames()));
+      db.close();
 
 	  
 To remove a document:	  
 
-      var ewdDOM = require('ewdDOM');
-      var params = {
-        path:'/home/user/globals/mgr'
-      };
-      ewdDOM.start(params,function(db) {
-        ewdDOM.removeDocument('stdemo-index');
+      var dom = require('ewdDOM');
+      var globals = require('/home/vista/mumps');
+      var db = new globals.Gtm();
+      db.open();
+      dom.init({
+        db: db, 
+        ewdGlobalsPath: '/home/vista/www/node/ewdGlobals', 
+        domGlobalName: 'xmldom'
       });
+      dom.removeDocument('stdemo-index');
+      db.close();
 	  
 	  
 ##  Summary of the EWD DOM APIs
@@ -201,9 +217,9 @@ To remove a document:
 
 ### System-level:
 
-#### ewdDOM.start()
+#### ewdDOM.init()
 
-Opens the Globals database and establishes the EWD DOM environment.  See examples above.
+Establishes the EWD DOM environment.  See examples above.
 
 #### ewdDOM.createDocument(documentName)
 
@@ -517,16 +533,23 @@ Adds an attribute to the current Element Node.  If the attribute already exists,
 
 ## License
 
-Copyright (c) 2011 M/Gateway Developments Ltd,
-Reigate, Surrey UK.
-All rights reserved.
-
-http://www.mgateway.com
-Email: rtweed@mgateway.com
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ Copyright (c) 2013 M/Gateway Developments Ltd,                           
+ Reigate, Surrey UK.                                                      
+ All rights reserved.                                                     
+                                                                           
+  http://www.mgateway.com                                                  
+  Email: rtweed@mgateway.com                                               
+                                                                           
+                                                                           
+  Licensed under the Apache License, Version 2.0 (the "License");          
+  you may not use this file except in compliance with the License.         
+  You may obtain a copy of the License at                                  
+                                                                           
+      http://www.apache.org/licenses/LICENSE-2.0                           
+                                                                           
+  Unless required by applicable law or agreed to in writing, software      
+  distributed under the License is distributed on an "AS IS" BASIS,        
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  See the License for the specific language governing permissions and      
+   limitations under the License.   
 
