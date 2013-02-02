@@ -16,6 +16,11 @@ Google Group for discussions, support, advice etc: [http://groups.google.co.uk/g
 You must also install Isaac Schlueter's sax module, which is used when importing XML/HTML files:
 
        npm install sax
+
+If you're not using the dEWDrop VM, you must also install ewdgateway2 which contains the OO abstraction
+of Mumps Global Storage (/lib/ewdGlobals.js):
+
+       npm install ewdgateway2 
 	   
 
 ##  EWD DOM
