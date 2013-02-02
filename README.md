@@ -80,7 +80,7 @@ The array of document names will, of course, initially be empty because you have
 The init() function must be invoked before you can use the ewdDOM APIs.  It takes a single argument which
 is an object with the following properties:
 
-- *db  = pointer to the Mumps database that you've opened
+- *db*  = pointer to the Mumps database that you've opened
 - *ewdGlobalsPath*  = the path used by the require() function to load the ewdGlobals module (ewdGlobals
   provides the OO abstraction for Mumps global storage)
 - *domGlobalName*  = the name of the Mumps Global that will be used to store your XML DOMs (default *^zewdDOM*)
