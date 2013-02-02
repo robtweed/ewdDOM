@@ -1,7 +1,7 @@
 { 
  "name": "ewdDOM",
  "description": "Persistent lightweight DOM using Mumps Global Storage",
- "version": "0.0.4,
+ "version": "0.0.4",
  "author": "Rob Tweed <rtweed@mgateway.com>",
  "repository": { 
    "type": "git",
